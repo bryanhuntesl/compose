@@ -1042,7 +1042,7 @@ class Service(object):
         return [build_spec(secret) for secret in self.secrets]
 
     def build(self, no_cache=False, pull=False, force_rm=False, memory=None, build_args_override=None,
-              gzip=False):
+              gzip=False, ssh_args=None):
         log.info('Building %s' % self.name)
 
         build_opts = self.options.get('build', {})

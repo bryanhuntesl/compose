@@ -353,7 +353,7 @@ class Project(object):
         return containers
 
     def build(self, service_names=None, no_cache=False, pull=False, force_rm=False, memory=None,
-              build_args=None, gzip=False, parallel_build=False):
+              build_args=None, gzip=False, parallel_build=False,ssh=None):
 
         services = []
         for service in self.get_services(service_names):
@@ -363,7 +363,7 @@ class Project(object):
                 log.info('%s uses an image, skipping' % service.name)
 
         def build_service(service):
-            service.build(no_cache, pull, force_rm, memory, build_args, gzip)
+            service.build(no_cache, pull, force_rm, memory, build_args, gzip, ssh)
 
         if parallel_build:
             _, errors = parallel.parallel_execute(

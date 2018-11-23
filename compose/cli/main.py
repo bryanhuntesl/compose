@@ -26,6 +26,7 @@ from ..config import ConfigurationError
 from ..config import parse_environment
 from ..config import parse_labels
 from ..config import resolve_build_args
+from ..config import resolve_ssh_args
 from ..config.environment import Environment
 from ..config.serialize import serialize_config
 from ..config.types import VolumeSpec
@@ -208,6 +209,8 @@ class TopLevelCommand(object):
                                   (default: the path of the Compose file)
       --compatibility             If set, Compose will attempt to convert deploy
                                   keys in v3 files to their non-Swarm equivalent
+      --ssh                       If set, Compose will share your ssh-agent
+                                  connection with containers when building.
 
     Commands:
       build              Build or rebuild services
@@ -264,9 +267,11 @@ class TopLevelCommand(object):
             -m, --memory MEM        Sets memory limit for the build container.
             --build-arg key=val     Set build-time variables for services.
             --parallel              Build images in parallel.
+            --ssh key=val           Expose ssh keys/agent to the build container.
         """
         service_names = options['SERVICE']
         build_args = options.get('--build-arg', None)
+        
         if build_args:
             if not service_names and docker.utils.version_lt(self.project.client.api_version, '1.25'):
                 raise UserError(
@@ -275,6 +280,10 @@ class TopLevelCommand(object):
                 )
             environment = Environment.from_env_file(self.project_dir)
             build_args = resolve_build_args(build_args, environment)
+            
+        # if ssh_args:    
+        #     environment = Environment.from_env_file(self.project_dir)
+        #     ssh_args = resolve_ssh_args(ssh_args, environment)
 
         self.project.build(
             service_names=options['SERVICE'],
@@ -285,6 +294,7 @@ class TopLevelCommand(object):
             build_args=build_args,
             gzip=options.get('--compress', False),
             parallel_build=options.get('--parallel', False),
+            ssh=options.get('--ssh', None)
         )
 
     def bundle(self, options):

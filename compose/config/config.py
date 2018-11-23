@@ -666,6 +666,10 @@ def resolve_build_args(buildargs, environment):
     args = parse_build_arguments(buildargs)
     return dict(resolve_env_var(k, v, environment) for k, v in six.iteritems(args))
 
+def resolve_ssh_args(sshargs, environment):
+    import pdb; pdb.set_trace()
+    args = parse_build_arguments(sshargs)
+    return dict(resolve_env_var(k, v, environment) for k, v in six.iteritems(args))
 
 def validate_extended_service_dict(service_dict, filename, service):
     error_prefix = "Cannot extend service '%s' in %s:" % (service, filename)
